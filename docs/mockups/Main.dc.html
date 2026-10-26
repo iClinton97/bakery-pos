@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cashier</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+button,input{font-family:inherit}
+a{text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #1F4E8C;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:940px;box-sizing:border-box;display:flex;flex-direction:column;font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;background:#F1F3F6;color:#1B2430">
+<header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;min-height:64px;box-sizing:border-box;padding:8px 24px;background:#fff;border-bottom:1px solid #D5DAE0">
+<div style="font-size:20px;font-weight:700">Bakery POS</div>
+<nav aria-label="Manager tools" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px">
+<span style="display:flex;align-items:center;gap:8px;font-size:16px"><span aria-hidden="true" style="width:10px;height:10px;border-radius:50%;background:#1E6B3A"></span>Terminal connected</span>
+<a href="Products.dc.html" style="display:flex;align-items:center;min-height:44px;padding:0 16px;box-sizing:border-box;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:16px">Products</a>
+<a href="EndOfDay.dc.html" style="display:flex;align-items:center;min-height:44px;padding:0 16px;box-sizing:border-box;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:16px">End of day</a>
+</nav>
+</header>
+<div style="flex:1;display:flex;flex-wrap:wrap;align-items:stretch">
+<main style="flex:999 1 600px;min-width:0;box-sizing:border-box;padding:24px;display:flex;flex-direction:column;gap:16px">
+<div role="group" aria-label="Product categories" style="display:flex;flex-wrap:wrap;gap:8px">
+<button aria-pressed="false" style="min-height:44px;padding:0 20px;border-radius:22px;border:1px solid #D5DAE0;background:#fff;color:#1B2430;font-size:16px;cursor:pointer">All</button>
+<button aria-pressed="false" style="min-height:44px;padding:0 20px;border-radius:22px;border:1px solid #D5DAE0;background:#fff;color:#1B2430;font-size:16px;cursor:pointer">Hot food</button>
+<button aria-pressed="true" style="min-height:44px;padding:0 20px;border-radius:22px;border:1px solid #1B2430;background:#1B2430;color:#fff;font-size:16px;cursor:pointer">Pies</button>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr));gap:12px;align-content:start">
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Plain Pies</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$5.50</span><span style="color:#4A5563;font-weight:600">22 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Sausage Rolls</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$5.00</span><span style="color:#4A5563;font-weight:600">15 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Pepper</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">9 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Mushroom</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">12 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #B4440B;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Hot Chilli</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="padding:2px 8px;border-radius:999px;background:#FBEDE4;color:#B4440B;font-weight:700">Low · 4 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Curry</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">10 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Lamb Curry</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">7 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Lamb Rosemary</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">6 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Meat Pastie</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$5.50</span><span style="color:#4A5563;font-weight:600">11 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Party Pie</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$1.80</span><span style="color:#4A5563;font-weight:600">40 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #B4440B;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Party Sausage Rolls</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$1.80</span><span style="padding:2px 8px;border-radius:999px;background:#FBEDE4;color:#B4440B;font-weight:700">Low · 25 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Beef Burgundy</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">8 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Chunky</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">13 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #B4440B;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Beef Satay</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="padding:2px 8px;border-radius:999px;background:#FBEDE4;color:#B4440B;font-weight:700">Low · 5 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Kidney</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">6 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Bacon &amp; Egg</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">9 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Onion Cheese</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">8 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #A32020;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Onion Tomato</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="padding:2px 8px;border-radius:999px;background:#FBE9E9;color:#A32020;font-weight:700">Sold out</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Onion</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">7 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Bacon &amp; Cheese</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">10 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Cheese</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.00</span><span style="color:#4A5563;font-weight:600">8 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Chicken Mushroom</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">11 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Chicken Vegetable</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">9 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Chicken Corn</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="color:#4A5563;font-weight:600">12 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #B4440B;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Chicken Satay</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$6.50</span><span style="padding:2px 8px;border-radius:999px;background:#FBEDE4;color:#B4440B;font-weight:700">Low · 3 left</span></span></button>
+<button style="min-height:92px;box-sizing:border-box;border:2px solid #D5DAE0;border-radius:12px;background:#fff;padding:12px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;gap:6px;color:#1B2430;font-size:17px;cursor:pointer"><span style="font-weight:600">Spinach Roll</span><span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:15px"><span>$5.50</span><span style="color:#4A5563;font-weight:600">10 left</span></span></button>
+</div>
+</main>
+<aside aria-label="Current order" style="flex:1 1 360px;max-width:440px;box-sizing:border-box;background:#fff;border-left:1px solid #D5DAE0;padding:24px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><h2 style="margin:0;font-size:20px">Current order</h2><span style="font-size:14px;color:#4A5563">Order 0042</span></div>
+<div style="padding:12px 0;border-bottom:1px solid #E3E7EC;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:17px;font-weight:600"><span>Plain Pies</span><span>$11.00</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:8px">
+<button aria-label="Decrease Plain Pies quantity" style="width:44px;height:44px;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:22px;cursor:pointer">−</button>
+<span style="min-width:28px;text-align:center;font-size:18px;font-weight:600">2</span>
+<button aria-label="Increase Plain Pies quantity" style="width:44px;height:44px;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:22px;cursor:pointer">+</button>
+</div>
+<button aria-label="Remove Plain Pies from order" style="min-height:44px;padding:0 8px;border:0;background:transparent;color:#4A5563;font-size:15px;text-decoration:underline;cursor:pointer">Remove</button>
+</div>
+</div>
+<div style="padding:12px 0;border-bottom:1px solid #E3E7EC;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:17px;font-weight:600"><span>Chicken Satay</span><span>$6.50</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:8px">
+<button aria-label="Decrease Chicken Satay quantity" style="width:44px;height:44px;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:22px;cursor:pointer">−</button>
+<span style="min-width:28px;text-align:center;font-size:18px;font-weight:600">1</span>
+<button aria-label="Increase Chicken Satay quantity" style="width:44px;height:44px;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:22px;cursor:pointer">+</button>
+</div>
+<button aria-label="Remove Chicken Satay from order" style="min-height:44px;padding:0 8px;border:0;background:transparent;color:#4A5563;font-size:15px;text-decoration:underline;cursor:pointer">Remove</button>
+</div>
+</div>
+<div style="padding:12px 0;border-bottom:1px solid #E3E7EC;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:17px;font-weight:600"><span>Large dim sim</span><span>$5.00</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<div style="display:flex;align-items:center;gap:8px">
+<button aria-label="Decrease Large dim sim quantity" style="width:44px;height:44px;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:22px;cursor:pointer">−</button>
+<span style="min-width:28px;text-align:center;font-size:18px;font-weight:600">2</span>
+<button aria-label="Increase Large dim sim quantity" style="width:44px;height:44px;border:1px solid #D5DAE0;border-radius:10px;background:#fff;color:#1B2430;font-size:22px;cursor:pointer">+</button>
+</div>
+<button aria-label="Remove Large dim sim from order" style="min-height:44px;padding:0 8px;border:0;background:transparent;color:#4A5563;font-size:15px;text-decoration:underline;cursor:pointer">Remove</button>
+</div>
+</div>
+<div style="flex:1"></div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:8px;font-size:26px;font-weight:700"><span>Total</span><span>$22.50</span></div>
+<a href="CardWaiting.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:64px;box-sizing:border-box;border-radius:12px;background:#1F4E8C;color:#fff;font-size:20px;font-weight:700">Pay by EFTPOS</a>
+<div style="display:flex;gap:8px">
+<a href="CashPayment.dc.html" style="flex:1;display:flex;align-items:center;justify-content:center;min-height:52px;box-sizing:border-box;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:17px;font-weight:600">Cash</a>
+<button style="flex:1;min-height:52px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:17px;font-weight:600;cursor:pointer">Void order</button>
+</div>
+<div style="font-size:14px;line-height:1.4;color:#4A5563">Stock counts change only when a payment is approved.</div>
+</aside>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":940}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

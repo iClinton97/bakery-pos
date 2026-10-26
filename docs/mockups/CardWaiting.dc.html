@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Card payment waiting</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+button,input{font-family:inherit}
+a{text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #1F4E8C;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:800px;box-sizing:border-box;display:flex;flex-direction:column;font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;background:#F1F3F6;color:#1B2430">
+<header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;min-height:64px;box-sizing:border-box;padding:8px 24px;background:#fff;border-bottom:1px solid #D5DAE0">
+<div style="font-size:20px;font-weight:700">Bakery POS</div>
+<span style="display:flex;align-items:center;gap:8px;font-size:16px"><span aria-hidden="true" style="width:10px;height:10px;border-radius:50%;background:#1E6B3A"></span>Terminal connected</span>
+</header>
+<main style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:48px 24px;text-align:center">
+<div style="font-size:18px;color:#4A5563">Amount due</div>
+<div style="font-size:80px;font-weight:700;line-height:1">$22.50</div>
+<section aria-label="Terminal status" style="width:100%;max-width:640px;box-sizing:border-box;background:#fff;border:1px solid #D5DAE0;border-radius:16px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:12px">
+<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="#D5DAE0"/><path d="M12 3a9 9 0 0 1 9 9" stroke="#1F4E8C"/></svg>
+<h1 style="margin:0;font-size:28px">Waiting for the customer</h1>
+<div style="max-width:460px;font-size:18px;line-height:1.5;color:#4A5563">Ask them to tap, insert or swipe their card on the terminal. The sale is only recorded once the terminal approves it.</div>
+</section>
+<div style="font-size:16px;color:#4A5563">Plain Pies × 2, Chicken Satay × 1, Large dim sim × 2</div>
+<a href="Main.dc.html" style="display:flex;align-items:center;justify-content:center;min-width:240px;min-height:56px;box-sizing:border-box;padding:0 24px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:18px;font-weight:600">Cancel payment</a>
+<section aria-label="Mock terminal controls" style="width:100%;max-width:640px;box-sizing:border-box;border:2px dashed #4A5563;border-radius:12px;padding:16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;text-align:left">
+<div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:700">Mock terminal</span><span style="font-size:14px;color:#4A5563">Development builds only. Pick the result the terminal returns.</span></div>
+<div style="display:flex;gap:8px">
+<a href="CardApproved.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:48px;box-sizing:border-box;padding:0 20px;border-radius:10px;background:#1B2430;color:#fff;font-size:16px;font-weight:600">Approve</a>
+<a href="CardDeclined.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:48px;box-sizing:border-box;padding:0 20px;border:1px solid #1B2430;border-radius:10px;background:#fff;color:#1B2430;font-size:16px;font-weight:600">Decline</a>
+</div>
+</section>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
