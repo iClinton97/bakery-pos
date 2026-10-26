@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stock page PIN</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+button,input{font-family:inherit}
+a{text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #1F4E8C;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:800px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:24px;font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;background:#F1F3F6;color:#1B2430">
+<main style="width:100%;max-width:400px;box-sizing:border-box;background:#fff;border:1px solid #D5DAE0;border-radius:16px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center">
+<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1B2430" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+<div style="display:flex;flex-direction:column;gap:6px"><h1 style="margin:0;font-size:26px">Live stock</h1><div style="font-size:16px;line-height:1.4;color:#4A5563">Enter the PIN to view stock. This page only works on the shop wifi.</div></div>
+<div role="img" aria-label="2 of 4 digits entered" style="display:flex;gap:16px">
+<span style="width:16px;height:16px;border-radius:50%;background:#1B2430"></span>
+<span style="width:16px;height:16px;border-radius:50%;background:#1B2430"></span>
+<span style="width:16px;height:16px;box-sizing:border-box;border-radius:50%;border:2px solid #4A5563"></span>
+<span style="width:16px;height:16px;box-sizing:border-box;border-radius:50%;border:2px solid #4A5563"></span>
+</div>
+<div style="width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">1</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">2</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">3</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">4</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">5</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">6</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">7</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">8</button>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">9</button>
+<span></span>
+<button style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:26px;font-weight:600;cursor:pointer">0</button>
+<button aria-label="Delete last digit" style="min-height:64px;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z"/><path d="M13 10l4 4M17 10l-4 4"/></svg></button>
+</div>
+<a href="Stock.dc.html" style="width:100%;display:flex;align-items:center;justify-content:center;min-height:60px;box-sizing:border-box;border-radius:12px;background:#1F4E8C;color:#fff;font-size:20px;font-weight:700">Unlock</a>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Payment approved</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+button,input{font-family:inherit}
+a{text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid #1F4E8C;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:800px;box-sizing:border-box;display:flex;flex-direction:column;font-family:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;background:#F1F3F6;color:#1B2430">
+<header style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;min-height:64px;box-sizing:border-box;padding:8px 24px;background:#fff;border-bottom:1px solid #D5DAE0">
+<div style="font-size:20px;font-weight:700">Bakery POS</div>
+<span style="display:flex;align-items:center;gap:8px;font-size:16px"><span aria-hidden="true" style="width:10px;height:10px;border-radius:50%;background:#1E6B3A"></span>Terminal connected</span>
+</header>
+<main style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:48px 24px;text-align:center">
+<div aria-hidden="true" style="width:96px;height:96px;border-radius:50%;background:#E6F3EA;color:#1E6B3A;display:flex;align-items:center;justify-content:center"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+<h1 style="margin:0;font-size:40px">Payment approved</h1>
+<div style="font-size:20px;color:#4A5563">$22.50 by card · 10:42 am</div>
+<section aria-label="Stock updated" style="width:100%;max-width:560px;box-sizing:border-box;background:#fff;border:1px solid #D5DAE0;border-radius:16px;padding:20px 24px;text-align:left;display:flex;flex-direction:column;gap:10px">
+<h2 style="margin:0;font-size:18px">Stock updated</h2>
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:17px"><span>Plain Pies</span><span style="color:#4A5563">−2 · 20 left</span></div>
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:17px"><span>Chicken Satay</span><span style="color:#B4440B;font-weight:700">−1 · 2 left · Low</span></div>
+<div style="display:flex;justify-content:space-between;gap:12px;font-size:17px"><span>Large dim sim</span><span style="color:#B4440B;font-weight:700">−2 · 6 left · Low</span></div>
+</section>
+<div style="display:flex;flex-wrap:wrap;gap:12px;width:100%;max-width:560px">
+<button style="flex:1 1 220px;min-height:64px;border:0;border-radius:12px;background:#1F4E8C;color:#fff;font-size:20px;font-weight:700;cursor:pointer">Print receipt</button>
+<a href="Main.dc.html" style="flex:1 1 220px;display:flex;align-items:center;justify-content:center;min-height:64px;box-sizing:border-box;border:1px solid #D5DAE0;border-radius:12px;background:#fff;color:#1B2430;font-size:20px;font-weight:600">New order</a>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
