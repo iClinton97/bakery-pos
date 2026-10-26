@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BakeryPos.App/BakeryPos.App.csproj" />
+    <Project Path="src/BakeryPos.Core/BakeryPos.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BakeryPos.Core.Tests/BakeryPos.Core.Tests.csproj" />
+  </Folder>
+</Solution>
