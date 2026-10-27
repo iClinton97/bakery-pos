@@ -27,13 +27,21 @@ public sealed record StockReport(
     IReadOnlyList<StockRow> Rows,
     IReadOnlyList<RefillRow> Refills)
 {
-    /// <summary>Rows come out most urgent first: sold out, then low, then OK, each from fewest to most in the booth.</summary>
+    /// <summary>
+    /// Popular products come first, in popularity order. The rest follow, most urgent first:
+    /// sold out, then low, then OK, each from fewest to most in the booth.
+    /// </summary>
     public static StockReport Build(ProductCatalogue catalogue, StockBoard board, DateTimeOffset now)
     {
         ArgumentNullException.ThrowIfNull(catalogue);
         ArgumentNullException.ThrowIfNull(board);
 
         var rows = catalogue.All
+            .OrderBy(p => p.PopularRank is null ? 1 : 0)
+            .ThenBy(p => p.PopularRank ?? int.MaxValue)
+            .ThenBy(p => board.StatusOf(p.Id) switch { StockStatus.SoldOut => 0, StockStatus.Low => 1, _ => 2 })
+            .ThenBy(p => board.BoothCount(p.Id))
+            .ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
             .Select(p => new StockRow(
                 p.Name,
                 p.Category,
@@ -41,9 +49,6 @@ public sealed record StockReport(
                 board.FridgeCount(p.Id),
                 p.ParLevel,
                 board.StatusOf(p.Id)))
-            .OrderBy(r => r.Status switch { StockStatus.SoldOut => 0, StockStatus.Low => 1, _ => 2 })
-            .ThenBy(r => r.Booth)
-            .ThenBy(r => r.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
 
         var refills = board.RefillList()
