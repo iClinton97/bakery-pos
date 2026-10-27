@@ -192,3 +192,19 @@ public class StockBoardTests
         Assert.Throws<ArgumentOutOfRangeException>(() => NewBoard().SetBooth(Pie.Id, -1));
     }
 }
+
+public class SampleStockTests
+{
+    [Fact]
+    public void SampleStock_NamesOnlyRealProducts_AndShowsWarnings()
+    {
+        var catalogue = SampleCatalogue.Create();
+
+        var board = SampleStock.Create(catalogue);
+
+        Assert.Equal(StockStatus.SoldOut, board.StatusOf("tenders"));
+        Assert.Equal(StockStatus.Low, board.StatusOf("hot-chilli"));
+        Assert.Equal(StockStatus.Ok, board.StatusOf("plain-pies"));
+        Assert.Equal(48, board.FridgeCount("plain-pies"));
+    }
+}

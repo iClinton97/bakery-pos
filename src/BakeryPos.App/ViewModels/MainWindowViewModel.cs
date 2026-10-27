@@ -9,6 +9,7 @@ using BakeryPos.Core.Catalogue;
 using BakeryPos.Core.Orders;
 using BakeryPos.Core.Payments;
 using BakeryPos.Core.Sales;
+using BakeryPos.Core.Stock;
 
 namespace BakeryPos.App.ViewModels;
 
@@ -26,6 +27,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly ProductCatalogue _catalogue;
     private readonly InteractiveMockTerminal _terminal;
     private readonly Checkout _checkout;
+    private readonly StockBoard _stock;
     private readonly Order _order = new();
     private readonly List<CompletedSale> _sales = new();
 
@@ -35,10 +37,12 @@ public sealed class MainWindowViewModel : ViewModelBase
     private int _orderNumber = 1;
     private CompletedSale? _lastSale;
     private int _splitCashCents;
+    private Category _selectedCategory = Category.Pies;
 
-    public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal)
+    public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal, StockBoard stock)
     {
         _catalogue = catalogue;
+        _stock = stock;
         _terminal = terminal;
         _checkout = new Checkout(terminal);
 
@@ -74,6 +78,8 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ObservableCollection<ProductTileViewModel> OtherTiles { get; } = new();
 
     public ObservableCollection<OrderLineViewModel> Lines { get; } = new();
+
+    public ObservableCollection<StockChangeViewModel> StockUpdates { get; } = new();
 
     public MiscellaneousViewModel Misc { get; }
 
@@ -179,20 +185,38 @@ public sealed class MainWindowViewModel : ViewModelBase
             tab.IsSelected = tab.Category == category;
         }
 
+        _selectedCategory = category;
+        FillTiles();
+    }
+
+    private void FillTiles()
+    {
         PopularTiles.Clear();
-        foreach (var product in _catalogue.Popular(category))
+        foreach (var product in _catalogue.Popular(_selectedCategory))
         {
-            PopularTiles.Add(new ProductTileViewModel(product, AddProduct));
+            PopularTiles.Add(new ProductTileViewModel(product, _stock, AddProduct));
         }
 
         OtherTiles.Clear();
-        foreach (var product in _catalogue.NotPopular(category))
+        foreach (var product in _catalogue.NotPopular(_selectedCategory))
         {
-            OtherTiles.Add(new ProductTileViewModel(product, AddProduct));
+            OtherTiles.Add(new ProductTileViewModel(product, _stock, AddProduct));
         }
 
         OtherHeading = HasPopular ? "All other items" : "All items";
         Raise(nameof(HasPopular));
+    }
+
+    /// <summary>Takes a finished sale out of stock and refreshes what the cashier sees.</summary>
+    private void ApplyStock(CompletedSale sale)
+    {
+        StockUpdates.Clear();
+        foreach (var change in _stock.Deduct(sale))
+        {
+            StockUpdates.Add(new StockChangeViewModel(change));
+        }
+
+        FillTiles();
     }
 
     private void AddProduct(Product product)
@@ -237,6 +261,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             {
                 _sales.Add(sale);
                 _lastSale = sale;
+                ApplyStock(sale);
                 Go(Screen.CardApproved);
             }
             else if (result.Payment.Status == PaymentStatus.Declined)
@@ -283,6 +308,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     {
         var sale = _checkout.PayWithCash(_order, OrderNumberText, cashReceivedCents);
         _sales.Add(sale);
+        ApplyStock(sale);
         StartNewOrder();
     }
 

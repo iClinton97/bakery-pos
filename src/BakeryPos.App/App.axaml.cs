@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using BakeryPos.App.Payments;
 using BakeryPos.App.ViewModels;
 using BakeryPos.Core.Catalogue;
+using BakeryPos.Core.Stock;
 
 namespace BakeryPos.App;
 
@@ -18,9 +19,11 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var catalogue = SampleCatalogue.Create();
+
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(SampleCatalogue.Create(), new InteractiveMockTerminal()),
+                DataContext = new MainWindowViewModel(catalogue, new InteractiveMockTerminal(), SampleStock.Create(catalogue)),
             };
         }
 
