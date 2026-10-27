@@ -8,16 +8,17 @@ public sealed class CategoryTabViewModel : ViewModelBase
 {
     private bool _isSelected;
 
-    public CategoryTabViewModel(string title, Category category, Action<Category> select)
+    /// <param name="category">The category this tab shows, or null for the Miscellaneous tab.</param>
+    public CategoryTabViewModel(string title, Category? category, Action select)
     {
         Title = title;
         Category = category;
-        SelectCommand = new RelayCommand(() => select(category));
+        SelectCommand = new RelayCommand(select);
     }
 
     public string Title { get; }
 
-    public Category Category { get; }
+    public Category? Category { get; }
 
     public bool IsSelected
     {
