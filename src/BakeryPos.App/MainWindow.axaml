@@ -145,6 +145,8 @@
         <Border Grid.ColumnSpan="2" Background="White" BorderBrush="#D5DAE0" BorderThickness="0,0,0,1" Padding="24,0" Height="64">
             <Grid ColumnDefinitions="Auto,*">
                 <TextBlock Text="Bakery POS" FontSize="20" FontWeight="Bold" Foreground="#1B2430" VerticalAlignment="Center" />
+                <TextBlock Grid.Column="1" Text="{Binding StockPageStatus}" IsVisible="{Binding HasStockPageStatus}"
+                           Foreground="#4A5563" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="24,0,0,0" />
                 <Border Grid.Column="1" Background="#FBE9E9" CornerRadius="8" Padding="12,6" Margin="24,0,0,0"
                         HorizontalAlignment="Right" VerticalAlignment="Center" IsVisible="{Binding HasStorageError}">
                     <TextBlock Text="{Binding StorageError}" Foreground="#A32020" FontWeight="SemiBold" TextWrapping="Wrap" />
