@@ -34,6 +34,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private Screen _screen = Screen.Selling;
     private int _orderNumber = 1;
     private CompletedSale? _lastSale;
+    private int _splitCashCents;
 
     public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal)
     {
@@ -51,7 +52,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         ];
 
         Misc = new MiscellaneousViewModel(AddMiscellaneous);
-        Cash = new CashPaymentViewModel(() => _order.TotalCents, CompleteCashSale);
+        Cash = new CashPaymentViewModel(() => _order.TotalCents, CompleteCashSale, StartSplitPayment);
 
         PayByCardCommand = new RelayCommand(StartCardPayment);
         PayByCashCommand = new RelayCommand(OpenCash);
@@ -59,7 +60,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         ApproveCommand = new RelayCommand(_terminal.Approve);
         DeclineCommand = new RelayCommand(_terminal.Decline);
         CancelCardCommand = new RelayCommand(_terminal.Cancel);
-        BackToOrderCommand = new RelayCommand(() => Go(Screen.Selling));
+        BackToOrderCommand = new RelayCommand(BackToOrder);
         NewOrderCommand = new RelayCommand(StartNewOrder);
 
         SelectCategory(Category.Pies);
@@ -138,7 +139,23 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public string ApprovedSummary => _lastSale is null
         ? ""
-        : $"{Money.Format(_lastSale.TotalCents)} by card · {_lastSale.CompletedAt.ToLocalTime():h:mm tt}";
+        : _lastSale.Method == PaymentMethod.Split
+            ? $"{Money.Format(_lastSale.TotalCents)} · cash {Money.Format(_lastSale.CashCents)} + card {Money.Format(_lastSale.CardCents)} · {_lastSale.CompletedAt.ToLocalTime():h:mm tt}"
+            : $"{Money.Format(_lastSale.TotalCents)} by card · {_lastSale.CompletedAt.ToLocalTime():h:mm tt}";
+
+    /// <summary>True while a part-cash, part-card payment is in progress.</summary>
+    public bool IsSplit => _splitCashCents > 0;
+
+    /// <summary>What the card is charged: the whole total, or the remainder after the cash part.</summary>
+    public string CardDueText => Money.Format(_order.TotalCents - _splitCashCents);
+
+    public string SplitCaption => $"Cash taken: {Money.Format(_splitCashCents)}. The card pays the rest.";
+
+    public string DeclinedMessage => IsSplit
+        ? $"The card part ({CardDueText}) was declined. The customer has paid {Money.Format(_splitCashCents)} in cash, which is not recorded until the card is approved."
+        : "Nothing has been recorded and the order is unchanged.";
+
+    public string DeclinedBackText => IsSplit ? "Cancel and give the cash back" : "Back to order";
 
     public string WaitingSummary => string.Join(", ", _order.Lines.Select(l => $"{l.Name} × {l.Quantity}"));
 
@@ -212,7 +229,9 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         try
         {
-            var result = await _checkout.PayByCardAsync(_order, OrderNumberText);
+            var result = _splitCashCents > 0
+                ? await _checkout.PayBySplitAsync(_order, OrderNumberText, _splitCashCents)
+                : await _checkout.PayByCardAsync(_order, OrderNumberText);
 
             if (result.Sale is { } sale)
             {
@@ -226,6 +245,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             }
             else
             {
+                _splitCashCents = 0;
                 Go(Screen.Selling);
             }
         }
@@ -242,8 +262,21 @@ public sealed class MainWindowViewModel : ViewModelBase
             return;
         }
 
+        _splitCashCents = 0;
         Cash.Reset();
         Go(Screen.CashPayment);
+    }
+
+    private void StartSplitPayment(int cashCents)
+    {
+        _splitCashCents = cashCents;
+        StartCardPayment();
+    }
+
+    private void BackToOrder()
+    {
+        _splitCashCents = 0;
+        Go(Screen.Selling);
     }
 
     private void CompleteCashSale(int cashReceivedCents)
@@ -256,6 +289,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private void StartNewOrder()
     {
         _order.Clear();
+        _splitCashCents = 0;
         _orderNumber++;
         RefreshOrder();
         Raise(nameof(OrderNumberText));
@@ -272,6 +306,11 @@ public sealed class MainWindowViewModel : ViewModelBase
         Raise(nameof(ApprovedTotalText));
         Raise(nameof(ApprovedSummary));
         Raise(nameof(WaitingSummary));
+        Raise(nameof(IsSplit));
+        Raise(nameof(CardDueText));
+        Raise(nameof(SplitCaption));
+        Raise(nameof(DeclinedMessage));
+        Raise(nameof(DeclinedBackText));
     }
 
     private void RefreshOrder()

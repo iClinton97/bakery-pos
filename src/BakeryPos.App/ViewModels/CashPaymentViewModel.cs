@@ -12,11 +12,13 @@ public sealed class CashPaymentViewModel : ViewModelBase
     private readonly PriceEntry _entry = new();
     private readonly Func<int> _totalCents;
     private readonly Action<int> _complete;
+    private readonly Action<int> _split;
 
-    public CashPaymentViewModel(Func<int> totalCents, Action<int> complete)
+    public CashPaymentViewModel(Func<int> totalCents, Action<int> complete, Action<int> split)
     {
         _totalCents = totalCents;
         _complete = complete;
+        _split = split;
 
         var keys = new List<KeypadKeyViewModel>();
         foreach (var label in new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0" })
@@ -36,6 +38,7 @@ public sealed class CashPaymentViewModel : ViewModelBase
         ];
 
         CompleteCommand = new RelayCommand(Complete);
+        SplitCommand = new RelayCommand(Split);
     }
 
     public IReadOnlyList<KeypadKeyViewModel> Keys { get; }
@@ -43,6 +46,9 @@ public sealed class CashPaymentViewModel : ViewModelBase
     public IReadOnlyList<KeypadKeyViewModel> QuickAmounts { get; }
 
     public ICommand CompleteCommand { get; }
+
+    /// <summary>Takes the cash typed so far and charges the card for the rest.</summary>
+    public ICommand SplitCommand { get; }
 
     public string DueText => Money.Format(_totalCents());
 
@@ -54,6 +60,9 @@ public sealed class CashPaymentViewModel : ViewModelBase
     public string ChangeText => Money.Format(Math.Abs(_entry.Cents - _totalCents()));
 
     public bool CanComplete => HasEnough;
+
+    /// <summary>A split needs some cash, but less than the total.</summary>
+    public bool CanSplit => _entry.Cents > 0 && _entry.Cents < _totalCents();
 
     private bool HasEnough => _totalCents() > 0 && _entry.Cents >= _totalCents();
 
@@ -89,6 +98,14 @@ public sealed class CashPaymentViewModel : ViewModelBase
         }
     }
 
+    private void Split()
+    {
+        if (CanSplit)
+        {
+            _split(_entry.Cents);
+        }
+    }
+
     private void Refresh()
     {
         Raise(nameof(DueText));
@@ -96,5 +113,6 @@ public sealed class CashPaymentViewModel : ViewModelBase
         Raise(nameof(ChangeLabel));
         Raise(nameof(ChangeText));
         Raise(nameof(CanComplete));
+        Raise(nameof(CanSplit));
     }
 }
