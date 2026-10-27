@@ -29,6 +29,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly Checkout _checkout;
     private readonly StockBoard _stock;
     private readonly ISalesStore _store;
+    private readonly LiveStockFeed? _feed;
     private readonly Order _order = new();
     private readonly List<CompletedSale> _sales = new();
 
@@ -37,15 +38,17 @@ public sealed class MainWindowViewModel : ViewModelBase
     private Screen _screen = Screen.Selling;
     private int _orderNumber;
     private string? _storageError;
+    private string _stockPageStatus = "";
     private CompletedSale? _lastSale;
     private int _splitCashCents;
     private Category _selectedCategory = Category.Pies;
 
-    public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal, StockBoard stock, ISalesStore store)
+    public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal, StockBoard stock, ISalesStore store, LiveStockFeed? feed = null)
     {
         _catalogue = catalogue;
         _stock = stock;
         _store = store;
+        _feed = feed;
         _orderNumber = store.NextOrderNumber();
         _terminal = terminal;
         _checkout = new Checkout(terminal);
@@ -73,6 +76,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         SelectCategory(Category.Pies);
         RefreshOrder();
+        PublishStock();
     }
 
     public IReadOnlyList<CategoryTabViewModel> Tabs { get; }
@@ -119,6 +123,23 @@ public sealed class MainWindowViewModel : ViewModelBase
     }
 
     public bool HasStorageError => _storageError is not null;
+
+    /// <summary>Where the stock page can be opened from other devices, or why it is off.</summary>
+    public string StockPageStatus
+    {
+        get => _stockPageStatus;
+        private set
+        {
+            if (Set(ref _stockPageStatus, value))
+            {
+                Raise(nameof(HasStockPageStatus));
+            }
+        }
+    }
+
+    public bool HasStockPageStatus => _stockPageStatus.Length > 0;
+
+    public void SetStockPageStatus(string status) => StockPageStatus = status;
 
     public bool HasPopular => PopularTiles.Count > 0;
 
@@ -237,7 +258,12 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         FillTiles();
         Save(sale);
+        PublishStock();
     }
+
+    /// <summary>Gives the stock web page a fresh picture of stock.</summary>
+    private void PublishStock() =>
+        _feed?.Publish(StockReport.Build(_catalogue, _stock, DateTimeOffset.UtcNow));
 
     private void Save(CompletedSale sale)
     {

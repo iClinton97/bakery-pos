@@ -20,5 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\BakeryPos.Core\BakeryPos.Core.csproj" />
     <ProjectReference Include="..\BakeryPos.Data\BakeryPos.Data.csproj" />
+    <ProjectReference Include="..\BakeryPos.Web\BakeryPos.Web.csproj" />
   </ItemGroup>
 </Project>
