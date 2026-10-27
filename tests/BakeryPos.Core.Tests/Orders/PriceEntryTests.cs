@@ -97,4 +97,35 @@ public class PriceEntryTests
     {
         Assert.Equal(300, Type("3x-").Cents);
     }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(2000, 2000)]
+    [InlineData(1550, 1550)]
+    [InlineData(5, 5)]
+    public void SetCents_ReplacesWhatWasTyped(int cents, int expected)
+    {
+        var entry = Type("99");
+
+        entry.SetCents(cents);
+
+        Assert.Equal(expected, entry.Cents);
+    }
+
+    [Fact]
+    public void SetCents_RejectsNegativeAmounts()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PriceEntry().SetCents(-1));
+    }
+
+    [Fact]
+    public void SetCents_ThenTyping_Continues()
+    {
+        var entry = new PriceEntry();
+        entry.SetCents(2000);
+
+        entry.Press('5');
+
+        Assert.Equal(20500, entry.Cents);
+    }
 }

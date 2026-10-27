@@ -77,6 +77,47 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
 
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#1F4E8C" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Height" Value="60" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#1A4377" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#1B2430" />
+            <Setter Property="BorderBrush" Value="#D5DAE0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Height" Value="52" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.chip">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#1B2430" />
+            <Setter Property="BorderBrush" Value="#D5DAE0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="MinHeight" Value="56" />
+            <Setter Property="Padding" Value="20,0" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
         <Style Selector="Button.step">
             <Setter Property="Background" Value="White" />
             <Setter Property="BorderBrush" Value="#D5DAE0" />
@@ -179,10 +220,18 @@
                         <TextBlock Text="Total" FontSize="26" FontWeight="Bold" Foreground="#1B2430" />
                         <TextBlock Grid.Column="1" Text="{Binding TotalText}" FontSize="26" FontWeight="Bold" Foreground="#1B2430" />
                     </Grid>
+                    <Button Classes="primary" Content="Pay by EFTPOS" Command="{Binding PayByCardCommand}" IsEnabled="{Binding HasItems}" Margin="0,8,0,0" />
+                    <Grid ColumnDefinitions="*,8,*" Margin="0,8,0,0">
+                        <Button Classes="secondary" Content="Cash" Command="{Binding PayByCashCommand}" IsEnabled="{Binding HasItems}" />
+                        <Button Grid.Column="2" Classes="secondary" Content="Void order" Command="{Binding VoidOrderCommand}" IsEnabled="{Binding HasItems}" />
+                    </Grid>
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,0,0,8">
-                    <TextBlock Text="Current order" FontSize="20" FontWeight="SemiBold" Foreground="#1B2430" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Current order" FontSize="20" FontWeight="SemiBold" Foreground="#1B2430" />
+                        <TextBlock Grid.Column="1" Text="{Binding OrderNumberText, StringFormat='Order {0}'}" Foreground="#4A5563" VerticalAlignment="Center" />
+                    </Grid>
                     <TextBlock Text="Tap a product to add it." Foreground="#4A5563" IsVisible="{Binding IsOrderEmpty}" />
                 </StackPanel>
 
@@ -208,5 +257,109 @@
                 </ScrollViewer>
             </DockPanel>
         </Border>
+
+        <!-- Card payment: waiting -->
+        <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#F1F3F6" IsVisible="{Binding IsCardWaiting}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" MaxWidth="640">
+                <TextBlock Text="Amount due" FontSize="18" Foreground="#4A5563" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding TotalText}" FontSize="80" FontWeight="Bold" Foreground="#1B2430" HorizontalAlignment="Center" />
+                <Border Background="White" BorderBrush="#D5DAE0" BorderThickness="1" CornerRadius="16" Padding="32">
+                    <StackPanel Spacing="12" HorizontalAlignment="Center">
+                        <TextBlock Text="Waiting for the customer" FontSize="28" FontWeight="SemiBold" Foreground="#1B2430" HorizontalAlignment="Center" />
+                        <TextBlock Text="Ask them to tap, insert or swipe their card on the terminal. The sale is only recorded once the terminal approves it."
+                                   FontSize="18" Foreground="#4A5563" TextWrapping="Wrap" TextAlignment="Center" />
+                    </StackPanel>
+                </Border>
+                <TextBlock Text="{Binding WaitingSummary}" FontSize="16" Foreground="#4A5563" TextWrapping="Wrap" TextAlignment="Center" />
+                <Button Classes="secondary" Content="Cancel payment" Command="{Binding CancelCardCommand}" HorizontalAlignment="Center" Width="240" />
+                <Border BorderBrush="#4A5563" BorderThickness="2" CornerRadius="12" Padding="16">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel>
+                            <TextBlock Text="Mock terminal" FontSize="16" FontWeight="Bold" Foreground="#1B2430" />
+                            <TextBlock Text="Development only. Pick the result the terminal returns." FontSize="14" Foreground="#4A5563" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Button Content="Approve" Command="{Binding ApproveCommand}" Background="#1B2430" Foreground="White" Height="48" Padding="20,0" />
+                            <Button Content="Decline" Command="{Binding DeclineCommand}" Background="White" Foreground="#1B2430" BorderBrush="#1B2430" BorderThickness="1" Height="48" Padding="20,0" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- Card payment: approved -->
+        <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#F1F3F6" IsVisible="{Binding IsCardApproved}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" Width="480">
+                <TextBlock Text="Payment approved" FontSize="40" FontWeight="Bold" Foreground="#1E6B3A" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding ApprovedSummary}" FontSize="20" Foreground="#4A5563" HorizontalAlignment="Center" />
+                <Button Classes="primary" Content="New order" Command="{Binding NewOrderCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Card payment: declined -->
+        <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#F1F3F6" IsVisible="{Binding IsCardDeclined}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="480">
+                <TextBlock Text="Card declined" FontSize="40" FontWeight="Bold" Foreground="#A32020" HorizontalAlignment="Center" />
+                <TextBlock Text="Nothing has been recorded and the order is unchanged." FontSize="18" Foreground="#4A5563" TextWrapping="Wrap" TextAlignment="Center" />
+                <Button Classes="primary" Content="Try card again" Command="{Binding PayByCardCommand}" />
+                <Button Classes="secondary" Content="Pay with cash" Command="{Binding PayByCashCommand}" />
+                <Button Classes="secondary" Content="Back to order" Command="{Binding BackToOrderCommand}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Cash payment -->
+        <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#F1F3F6" IsVisible="{Binding IsCashPayment}">
+            <ScrollViewer>
+                <Grid ColumnDefinitions="*,*" Margin="24" MaxWidth="1100" HorizontalAlignment="Center">
+                    <Border Background="White" BorderBrush="#D5DAE0" BorderThickness="1" CornerRadius="16" Padding="24" Margin="0,0,12,0">
+                        <StackPanel Spacing="16">
+                            <TextBlock Text="Cash received" FontSize="16" Foreground="#4A5563" />
+                            <TextBlock Text="{Binding Cash.ReceivedText}" FontSize="56" FontWeight="Bold" Foreground="#1B2430" />
+                            <ItemsControl ItemsSource="{Binding Cash.QuickAmounts}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:KeypadKeyViewModel">
+                                        <Button Classes="chip" Content="{Binding Label}" Command="{Binding PressCommand}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <ItemsControl ItemsSource="{Binding Cash.Keys}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="3" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:KeypadKeyViewModel">
+                                        <Button Classes="key" Content="{Binding Label}" Command="{Binding PressCommand}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="1" Background="White" BorderBrush="#D5DAE0" BorderThickness="1" CornerRadius="16" Padding="24" Margin="12,0,0,0">
+                        <StackPanel Spacing="16">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Text="Amount due" FontSize="20" Foreground="#1B2430" />
+                                <TextBlock Grid.Column="1" Text="{Binding Cash.DueText}" FontSize="20" FontWeight="Bold" Foreground="#1B2430" />
+                            </Grid>
+                            <Border Background="#E6F3EA" CornerRadius="12" Padding="20">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Text="{Binding Cash.ChangeLabel}" FontSize="16" FontWeight="SemiBold" Foreground="#1E6B3A" />
+                                    <TextBlock Text="{Binding Cash.ChangeText}" FontSize="56" FontWeight="Bold" Foreground="#1B2430" />
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text="The sale is recorded when you complete it." FontSize="15" Foreground="#4A5563" TextWrapping="Wrap" />
+                            <Button Classes="primary" Content="Complete sale" Command="{Binding Cash.CompleteCommand}" IsEnabled="{Binding Cash.CanComplete}" />
+                            <Button Classes="secondary" Content="Cancel" Command="{Binding BackToOrderCommand}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>

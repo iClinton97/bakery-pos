@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using BakeryPos.App.Payments;
 using BakeryPos.App.ViewModels;
 using BakeryPos.Core.Catalogue;
 
@@ -19,7 +20,7 @@ public partial class App : Application
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(SampleCatalogue.Create()),
+                DataContext = new MainWindowViewModel(SampleCatalogue.Create(), new InteractiveMockTerminal()),
             };
         }
 
