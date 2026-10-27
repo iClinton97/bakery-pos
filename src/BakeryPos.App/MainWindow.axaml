@@ -2,8 +2,165 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="using:BakeryPos.App.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="800"
         x:Class="BakeryPos.App.MainWindow"
-        Title="BakeryPos.App">
-    Welcome to Avalonia!
+        x:DataType="vm:MainWindowViewModel"
+        Width="1280" Height="800"
+        Background="#F1F3F6"
+        Title="Bakery POS">
+
+    <Window.Resources>
+        <DataTemplate x:Key="ProductTile" x:DataType="vm:ProductTileViewModel">
+            <Button Classes="tile" Command="{Binding AddCommand}">
+                <Grid ColumnDefinitions="10,*">
+                    <Border Background="{Binding StripeBrush}" CornerRadius="10,0,0,10" />
+                    <StackPanel Grid.Column="1" Margin="12" VerticalAlignment="Stretch" Spacing="2">
+                        <TextBlock Text="{Binding Name}" FontSize="17" FontWeight="SemiBold" Foreground="#1B2430" TextWrapping="Wrap" />
+                        <TextBlock Text="{Binding TypeLabel}" FontSize="13" Foreground="#4A5563" IsVisible="{Binding HasType}" />
+                        <TextBlock Text="{Binding PriceText}" FontSize="15" Foreground="#1B2430" />
+                    </StackPanel>
+                </Grid>
+            </Button>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Window.Styles>
+        <Style Selector="Button.tab">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#1B2430" />
+            <Setter Property="BorderBrush" Value="#D5DAE0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="22" />
+            <Setter Property="MinHeight" Value="44" />
+            <Setter Property="Padding" Value="20,0" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+        </Style>
+        <Style Selector="Button.tab.selected">
+            <Setter Property="Background" Value="#1B2430" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderBrush" Value="#1B2430" />
+        </Style>
+        <Style Selector="Button.tab.selected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#1B2430" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style Selector="Button.tile">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#D5DAE0" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Height" Value="104" />
+            <Setter Property="Margin" Value="0,0,12,12" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        </Style>
+        <Style Selector="Button.tile:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#F1F3F6" />
+        </Style>
+
+        <Style Selector="Button.step">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#D5DAE0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Width" Value="44" />
+            <Setter Property="Height" Value="44" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+    </Window.Styles>
+
+    <Grid ColumnDefinitions="*,380" RowDefinitions="Auto,*">
+
+        <!-- Top bar -->
+        <Border Grid.ColumnSpan="2" Background="White" BorderBrush="#D5DAE0" BorderThickness="0,0,0,1" Padding="24,0" Height="64">
+            <TextBlock Text="Bakery POS" FontSize="20" FontWeight="Bold" Foreground="#1B2430" VerticalAlignment="Center" />
+        </Border>
+
+        <!-- Products -->
+        <ScrollViewer Grid.Row="1" Grid.Column="0">
+            <StackPanel Margin="24" Spacing="12">
+
+                <ItemsControl ItemsSource="{Binding Tabs}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:CategoryTabViewModel">
+                            <Button Classes="tab" Classes.selected="{Binding IsSelected}"
+                                    Content="{Binding Title}" Command="{Binding SelectCommand}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock Text="Popular" FontSize="18" FontWeight="SemiBold" Foreground="#1B2430"
+                           IsVisible="{Binding HasPopular}" />
+                <ItemsControl ItemsSource="{Binding PopularTiles}" IsVisible="{Binding HasPopular}"
+                              ItemTemplate="{StaticResource ProductTile}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <TextBlock Text="{Binding OtherHeading}" FontSize="18" FontWeight="SemiBold" Foreground="#1B2430" />
+                <ItemsControl ItemsSource="{Binding OtherTiles}" ItemTemplate="{StaticResource ProductTile}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Current order -->
+        <Border Grid.Row="1" Grid.Column="1" Background="White" BorderBrush="#D5DAE0" BorderThickness="1,0,0,0" Padding="24">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Bottom" Spacing="4">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Text="Total" FontSize="26" FontWeight="Bold" Foreground="#1B2430" />
+                        <TextBlock Grid.Column="1" Text="{Binding TotalText}" FontSize="26" FontWeight="Bold" Foreground="#1B2430" />
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Top" Spacing="8" Margin="0,0,0,8">
+                    <TextBlock Text="Current order" FontSize="20" FontWeight="SemiBold" Foreground="#1B2430" />
+                    <TextBlock Text="Tap a product to add it." Foreground="#4A5563" IsVisible="{Binding IsOrderEmpty}" />
+                </StackPanel>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Lines}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:OrderLineViewModel">
+                                <StackPanel Spacing="8" Margin="0,0,0,12">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Text="{Binding Name}" FontSize="17" FontWeight="SemiBold" Foreground="#1B2430" TextWrapping="Wrap" />
+                                        <TextBlock Grid.Column="1" Text="{Binding LineTotalText}" FontSize="17" FontWeight="SemiBold" Foreground="#1B2430" />
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button Classes="step" Content="-" Command="{Binding DecreaseCommand}" />
+                                        <TextBlock Text="{Binding Quantity}" Width="28" TextAlignment="Center" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold" Foreground="#1B2430" />
+                                        <Button Classes="step" Content="+" Command="{Binding IncreaseCommand}" />
+                                        <Button Content="Remove" Command="{Binding RemoveCommand}" Background="Transparent" Foreground="#4A5563" BorderThickness="0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+    </Grid>
 </Window>
