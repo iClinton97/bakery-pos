@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,8 +14,9 @@ namespace BakeryPos.Core.Sales;
 public sealed record CardCheckoutResult(PaymentResult Payment, CompletedSale? Sale);
 
 /// <summary>
-/// Turns an order into a finished sale. A sale only exists once money has been taken:
-/// an approved card payment, or enough cash. A declined or cancelled card gives no sale.
+/// Turns an order into a finished sale. A sale only exists once the whole total is paid:
+/// an approved card payment, enough cash, or cash plus an approved card for the remainder.
+/// A declined or cancelled card gives no sale.
 /// </summary>
 public sealed class Checkout
 {
@@ -39,7 +41,43 @@ public sealed class Checkout
             cancellationToken);
 
         var sale = payment.IsApproved
-            ? Snapshot(order, reference, PaymentMethod.Card, cashReceivedCents: 0)
+            ? Snapshot(order, reference, [new SalePayment(PaymentMethod.Card, order.TotalCents)], cashReceivedCents: 0)
+            : null;
+
+        return new CardCheckoutResult(payment, sale);
+    }
+
+    /// <summary>
+    /// The customer pays part in cash and the rest by card. The card is charged only for
+    /// the remainder. The sale exists only if the card is approved.
+    /// </summary>
+    public async Task<CardCheckoutResult> PayBySplitAsync(
+        Order order,
+        string reference,
+        int cashCents,
+        CancellationToken cancellationToken = default)
+    {
+        RequireItems(order);
+
+        if (cashCents <= 0 || cashCents >= order.TotalCents)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(cashCents),
+                "The cash part must be more than zero and less than the total.");
+        }
+
+        var cardCents = order.TotalCents - cashCents;
+
+        var payment = await _terminal.ChargeAsync(
+            new PaymentRequest(cardCents, reference),
+            cancellationToken);
+
+        var sale = payment.IsApproved
+            ? Snapshot(
+                order,
+                reference,
+                [new SalePayment(PaymentMethod.Cash, cashCents), new SalePayment(PaymentMethod.Card, cardCents)],
+                cashReceivedCents: cashCents)
             : null;
 
         return new CardCheckoutResult(payment, sale);
@@ -56,7 +94,7 @@ public sealed class Checkout
                 "Cash received must cover the total.");
         }
 
-        return Snapshot(order, reference, PaymentMethod.Cash, cashReceivedCents);
+        return Snapshot(order, reference, [new SalePayment(PaymentMethod.Cash, order.TotalCents)], cashReceivedCents);
     }
 
     private static void RequireItems(Order order)
@@ -69,7 +107,11 @@ public sealed class Checkout
         }
     }
 
-    private CompletedSale Snapshot(Order order, string reference, PaymentMethod method, int cashReceivedCents)
+    private CompletedSale Snapshot(
+        Order order,
+        string reference,
+        IReadOnlyList<SalePayment> payments,
+        int cashReceivedCents)
     {
         var lines = order.Lines
             .Select(l => new SaleLine(l.Name, l.UnitPriceCents, l.Quantity, l.Product?.Id))
@@ -79,7 +121,7 @@ public sealed class Checkout
             reference,
             lines,
             order.TotalCents,
-            method,
+            payments,
             _clock.GetUtcNow(),
             cashReceivedCents);
     }

@@ -262,7 +262,8 @@
         <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#F1F3F6" IsVisible="{Binding IsCardWaiting}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20" MaxWidth="640">
                 <TextBlock Text="Amount due" FontSize="18" Foreground="#4A5563" HorizontalAlignment="Center" />
-                <TextBlock Text="{Binding TotalText}" FontSize="80" FontWeight="Bold" Foreground="#1B2430" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding CardDueText}" FontSize="80" FontWeight="Bold" Foreground="#1B2430" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding SplitCaption}" IsVisible="{Binding IsSplit}" FontSize="18" Foreground="#4A5563" HorizontalAlignment="Center" />
                 <Border Background="White" BorderBrush="#D5DAE0" BorderThickness="1" CornerRadius="16" Padding="32">
                     <StackPanel Spacing="12" HorizontalAlignment="Center">
                         <TextBlock Text="Waiting for the customer" FontSize="28" FontWeight="SemiBold" Foreground="#1B2430" HorizontalAlignment="Center" />
@@ -300,10 +301,10 @@
         <Grid Grid.RowSpan="2" Grid.ColumnSpan="2" Background="#F1F3F6" IsVisible="{Binding IsCardDeclined}">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" Width="480">
                 <TextBlock Text="Card declined" FontSize="40" FontWeight="Bold" Foreground="#A32020" HorizontalAlignment="Center" />
-                <TextBlock Text="Nothing has been recorded and the order is unchanged." FontSize="18" Foreground="#4A5563" TextWrapping="Wrap" TextAlignment="Center" />
+                <TextBlock Text="{Binding DeclinedMessage}" FontSize="18" Foreground="#4A5563" TextWrapping="Wrap" TextAlignment="Center" />
                 <Button Classes="primary" Content="Try card again" Command="{Binding PayByCardCommand}" />
                 <Button Classes="secondary" Content="Pay with cash" Command="{Binding PayByCashCommand}" />
-                <Button Classes="secondary" Content="Back to order" Command="{Binding BackToOrderCommand}" />
+                <Button Classes="secondary" Content="{Binding DeclinedBackText}" Command="{Binding BackToOrderCommand}" />
             </StackPanel>
         </Grid>
 
@@ -355,6 +356,8 @@
                             </Border>
                             <TextBlock Text="The sale is recorded when you complete it." FontSize="15" Foreground="#4A5563" TextWrapping="Wrap" />
                             <Button Classes="primary" Content="Complete sale" Command="{Binding Cash.CompleteCommand}" IsEnabled="{Binding Cash.CanComplete}" />
+                            <Button Classes="secondary" Content="Split with card" Command="{Binding Cash.SplitCommand}" IsEnabled="{Binding Cash.CanSplit}" />
+                            <TextBlock Text="To split, type the cash amount first. The card pays the rest." FontSize="14" Foreground="#4A5563" TextWrapping="Wrap" />
                             <Button Classes="secondary" Content="Cancel" Command="{Binding BackToOrderCommand}" />
                         </StackPanel>
                     </Border>

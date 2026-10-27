@@ -148,4 +148,88 @@ public class CheckoutTests
         Assert.Contains(sale.Lines, l => !l.IsMiscellaneous && l.ProductId == "plain-pies");
         Assert.Contains(sale.Lines, l => l.IsMiscellaneous);
     }
+
+    [Fact]
+    public async Task Split_Approved_RecordsBothPayments()
+    {
+        var terminal = new MockPaymentTerminal();
+        var checkout = new Checkout(terminal);
+
+        var result = await checkout.PayBySplitAsync(OrderWithPieAndMisc(), "0044", 1000);
+
+        var sale = Assert.IsType<CompletedSale>(result.Sale);
+        Assert.Equal(PaymentMethod.Split, sale.Method);
+        Assert.Equal(1000, sale.CashCents);
+        Assert.Equal(450, sale.CardCents);
+        Assert.Equal(1450, sale.TotalCents);
+        Assert.Equal(0, sale.ChangeCents);
+        Assert.Equal(2, sale.Payments.Count);
+    }
+
+    [Fact]
+    public async Task Split_ChargesTheCardOnlyForTheRemainder()
+    {
+        var terminal = new MockPaymentTerminal();
+        var checkout = new Checkout(terminal);
+
+        await checkout.PayBySplitAsync(OrderWithPieAndMisc(), "0044", 1000);
+
+        var request = Assert.Single(terminal.Requests);
+        Assert.Equal(450, request.AmountCents);
+        Assert.Equal("0044", request.Reference);
+    }
+
+    [Theory]
+    [InlineData(PaymentStatus.Declined)]
+    [InlineData(PaymentStatus.Cancelled)]
+    public async Task Split_CardNotApproved_GivesNoSale(PaymentStatus status)
+    {
+        var terminal = new MockPaymentTerminal { NextStatus = status };
+        var checkout = new Checkout(terminal);
+
+        var result = await checkout.PayBySplitAsync(OrderWithPieAndMisc(), "0044", 1000);
+
+        Assert.Null(result.Sale);
+        Assert.False(result.Payment.IsApproved);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-100)]
+    [InlineData(1450)]
+    [InlineData(2000)]
+    public async Task Split_RejectsACashPartOutsideZeroAndTotal_WithoutCallingTheTerminal(int cashCents)
+    {
+        var terminal = new MockPaymentTerminal();
+        var checkout = new Checkout(terminal);
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => checkout.PayBySplitAsync(OrderWithPieAndMisc(), "0044", cashCents));
+
+        Assert.Empty(terminal.Requests);
+    }
+
+    [Fact]
+    public async Task Split_EmptyOrder_Throws()
+    {
+        var checkout = new Checkout(new MockPaymentTerminal());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => checkout.PayBySplitAsync(new Order(), "0044", 500));
+    }
+
+    [Fact]
+    public async Task CardSale_HasOneCardPayment_ForTheFullTotal()
+    {
+        var checkout = new Checkout(new MockPaymentTerminal());
+
+        var result = await checkout.PayByCardAsync(OrderWithPieAndMisc(), "0045");
+
+        var sale = Assert.IsType<CompletedSale>(result.Sale);
+        var payment = Assert.Single(sale.Payments);
+        Assert.Equal(PaymentMethod.Card, payment.Method);
+        Assert.Equal(1450, payment.AmountCents);
+        Assert.Equal(1450, sale.CardCents);
+        Assert.Equal(0, sale.CashCents);
+    }
 }
