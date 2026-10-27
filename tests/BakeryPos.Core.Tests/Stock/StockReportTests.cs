@@ -50,6 +50,21 @@ public class StockReportTests
     }
 
     [Fact]
+    public void PopularProducts_ComeFirst_InPopularityOrder_EvenWhenStockIsFine()
+    {
+        var plain = new Product("Plain Pies", Category.Pies, 550, 20, 5, PopularRank: 1);
+        var roll = new Product("Sausage Rolls", Category.Pies, 550, 20, 5, PopularRank: 2);
+        var curry = new Product("Curry", Category.Pies, 600, 20, 5);
+        var catalogue = new ProductCatalogue([curry, roll, plain]);
+        var board = new StockBoard(catalogue);
+        board.SetBooth(curry.Id, 0);
+
+        var names = StockReport.Build(catalogue, board, Now).Rows.Select(r => r.Name).ToArray();
+
+        Assert.Equal(new[] { "Plain Pies", "Sausage Rolls", "Curry" }, names);
+    }
+
+    [Fact]
     public void Refills_MatchTheStockBoard()
     {
         var (catalogue, board) = Setup();
