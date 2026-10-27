@@ -94,7 +94,7 @@ public class LoginGuardTests
 
     [Theory]
     [InlineData("")]
-    [InlineData("123")]
+    [InlineData("12345")]
     public void ShortPins_AreRejected(string pin)
     {
         Assert.Throws<ArgumentException>(() => new LoginGuard(pin));

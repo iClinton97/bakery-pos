@@ -3,9 +3,11 @@
     <Project Path="src/BakeryPos.App/BakeryPos.App.csproj" />
     <Project Path="src/BakeryPos.Core/BakeryPos.Core.csproj" />
     <Project Path="src/BakeryPos.Data/BakeryPos.Data.csproj" />
+    <Project Path="src/BakeryPos.Web/BakeryPos.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/BakeryPos.Core.Tests/BakeryPos.Core.Tests.csproj" />
     <Project Path="tests/BakeryPos.Data.Tests/BakeryPos.Data.Tests.csproj" />
+    <Project Path="tests/BakeryPos.Web.Tests/BakeryPos.Web.Tests.csproj" />
   </Folder>
 </Solution>

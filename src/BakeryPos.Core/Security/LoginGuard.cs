@@ -35,9 +35,9 @@ public sealed class LoginGuard
 
     public LoginGuard(string pin, TimeProvider? clock = null, int maxFailures = 5, TimeSpan? lockout = null)
     {
-        if (string.IsNullOrEmpty(pin) || pin.Length < 4)
+        if (string.IsNullOrEmpty(pin) || pin.Length < 6)
         {
-            throw new ArgumentException("The PIN must be at least 4 characters.", nameof(pin));
+            throw new ArgumentException("The PIN must be at least 6 characters.", nameof(pin));
         }
 
         ArgumentOutOfRangeException.ThrowIfLessThan(maxFailures, 1);
