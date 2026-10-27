@@ -19,6 +19,9 @@ public enum StockStatus
 /// <summary>What one product looks like after a sale: how many were taken and how many are left in the booth.</summary>
 public sealed record StockChange(Product Product, int Sold, int BoothAfter, StockStatus Status);
 
+/// <summary>The saved form of one product's counts, used to store stock and bring it back.</summary>
+public sealed record StockSnapshot(string ProductId, int Booth, int Fridge);
+
 /// <summary>A product that needs refilling, and how much to bring out of the fridge.</summary>
 /// <param name="BringOut">What can be moved now: the gap to par, limited to what is in the fridge.</param>
 /// <param name="FridgeShortfall">How much is still missing because the fridge does not hold enough.</param>
@@ -65,6 +68,32 @@ public sealed class StockBoard
         }
 
         return booth <= product.AlertAt ? StockStatus.Low : StockStatus.Ok;
+    }
+
+    /// <summary>Every product's current counts, ready to be saved.</summary>
+    public IReadOnlyList<StockSnapshot> Snapshot() =>
+        _levels.Select(kv => new StockSnapshot(kv.Key, kv.Value.Booth, kv.Value.Fridge)).ToList();
+
+    /// <summary>
+    /// Puts saved counts back. Products that are no longer in the catalogue are skipped.
+    /// Returns how many were restored.
+    /// </summary>
+    public int Restore(IEnumerable<StockSnapshot> snapshots)
+    {
+        ArgumentNullException.ThrowIfNull(snapshots);
+
+        var restored = 0;
+        foreach (var snapshot in snapshots)
+        {
+            if (_levels.TryGetValue(snapshot.ProductId, out var level))
+            {
+                level.Booth = RequireNotNegative(snapshot.Booth);
+                level.Fridge = RequireNotNegative(snapshot.Fridge);
+                restored++;
+            }
+        }
+
+        return restored;
     }
 
     public void SetBooth(string productId, int count) => Get(productId).Booth = RequireNotNegative(count);

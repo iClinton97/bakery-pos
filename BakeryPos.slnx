@@ -2,8 +2,10 @@
   <Folder Name="/src/">
     <Project Path="src/BakeryPos.App/BakeryPos.App.csproj" />
     <Project Path="src/BakeryPos.Core/BakeryPos.Core.csproj" />
+    <Project Path="src/BakeryPos.Data/BakeryPos.Data.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/BakeryPos.Core.Tests/BakeryPos.Core.Tests.csproj" />
+    <Project Path="tests/BakeryPos.Data.Tests/BakeryPos.Data.Tests.csproj" />
   </Folder>
 </Solution>

@@ -181,6 +181,32 @@ public class StockBoardTests
     }
 
     [Fact]
+    public void Snapshot_ThenRestore_BringsCountsBack()
+    {
+        var board = NewBoard();
+        board.SetBooth(Pie.Id, 7);
+        board.SetFridge(Pie.Id, 33);
+
+        var fresh = NewBoard();
+        var restored = fresh.Restore(board.Snapshot());
+
+        Assert.Equal(2, restored);
+        Assert.Equal(7, fresh.BoothCount(Pie.Id));
+        Assert.Equal(33, fresh.FridgeCount(Pie.Id));
+    }
+
+    [Fact]
+    public void Restore_SkipsProductsThatAreNoLongerInTheCatalogue()
+    {
+        var board = NewBoard();
+
+        var restored = board.Restore([new StockSnapshot("gone", 5, 5), new StockSnapshot(Pie.Id, 9, 1)]);
+
+        Assert.Equal(1, restored);
+        Assert.Equal(9, board.BoothCount(Pie.Id));
+    }
+
+    [Fact]
     public void UnknownProduct_Throws()
     {
         Assert.Throws<ArgumentException>(() => NewBoard().BoothCount("nope"));
