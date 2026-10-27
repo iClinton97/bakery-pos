@@ -28,21 +28,25 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly InteractiveMockTerminal _terminal;
     private readonly Checkout _checkout;
     private readonly StockBoard _stock;
+    private readonly ISalesStore _store;
     private readonly Order _order = new();
     private readonly List<CompletedSale> _sales = new();
 
     private string _otherHeading = "";
     private bool _isMiscellaneous;
     private Screen _screen = Screen.Selling;
-    private int _orderNumber = 1;
+    private int _orderNumber;
+    private string? _storageError;
     private CompletedSale? _lastSale;
     private int _splitCashCents;
     private Category _selectedCategory = Category.Pies;
 
-    public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal, StockBoard stock)
+    public MainWindowViewModel(ProductCatalogue catalogue, InteractiveMockTerminal terminal, StockBoard stock, ISalesStore store)
     {
         _catalogue = catalogue;
         _stock = stock;
+        _store = store;
+        _orderNumber = store.NextOrderNumber();
         _terminal = terminal;
         _checkout = new Checkout(terminal);
 
@@ -100,6 +104,21 @@ public sealed class MainWindowViewModel : ViewModelBase
     public ICommand BackToOrderCommand { get; }
 
     public ICommand NewOrderCommand { get; }
+
+    /// <summary>Set when a sale could not be saved to disk. The sale still went through at the till.</summary>
+    public string? StorageError
+    {
+        get => _storageError;
+        private set
+        {
+            if (Set(ref _storageError, value))
+            {
+                Raise(nameof(HasStorageError));
+            }
+        }
+    }
+
+    public bool HasStorageError => _storageError is not null;
 
     public bool HasPopular => PopularTiles.Count > 0;
 
@@ -207,7 +226,7 @@ public sealed class MainWindowViewModel : ViewModelBase
         Raise(nameof(HasPopular));
     }
 
-    /// <summary>Takes a finished sale out of stock and refreshes what the cashier sees.</summary>
+    /// <summary>Takes a finished sale out of stock, saves it, and refreshes what the cashier sees.</summary>
     private void ApplyStock(CompletedSale sale)
     {
         StockUpdates.Clear();
@@ -217,6 +236,21 @@ public sealed class MainWindowViewModel : ViewModelBase
         }
 
         FillTiles();
+        Save(sale);
+    }
+
+    private void Save(CompletedSale sale)
+    {
+        try
+        {
+            _store.RecordSale(sale, _stock);
+            StorageError = null;
+        }
+        catch (Exception ex)
+        {
+            // The customer has already paid, so never stop the till. Tell the operator instead.
+            StorageError = $"Sale {sale.Reference} was not saved to disk: {ex.Message}";
+        }
     }
 
     private void AddProduct(Product product)
