@@ -1,3 +1,4 @@
+using System;
 using BakeryPos.Core.Catalogue;
 
 namespace BakeryPos.Core.Orders;
@@ -57,6 +58,16 @@ public sealed class PriceEntry
     }
 
     public void Clear() => _text = "";
+
+    /// <summary>Replaces what was typed with an exact amount, for quick buttons such as "$20".</summary>
+    public void SetCents(int cents)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(cents);
+
+        var whole = cents / 100;
+        var fraction = cents % 100;
+        _text = cents == 0 ? "" : fraction == 0 ? whole.ToString() : $"{whole}.{fraction:00}";
+    }
 
     private void PressDigit(char digit)
     {
