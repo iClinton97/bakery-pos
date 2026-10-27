@@ -63,6 +63,20 @@
             <Setter Property="Background" Value="#F1F3F6" />
         </Style>
 
+        <Style Selector="Button.key">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="Foreground" Value="#1B2430" />
+            <Setter Property="BorderBrush" Value="#D5DAE0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Height" Value="68" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
         <Style Selector="Button.step">
             <Setter Property="Background" Value="White" />
             <Setter Property="BorderBrush" Value="#D5DAE0" />
@@ -85,7 +99,7 @@
         </Border>
 
         <!-- Products -->
-        <ScrollViewer Grid.Row="1" Grid.Column="0">
+        <ScrollViewer Grid.Row="1" Grid.Column="0" VerticalScrollBarVisibility="Auto" AllowAutoHide="False">
             <StackPanel Margin="24" Spacing="12">
 
                 <ItemsControl ItemsSource="{Binding Tabs}">
@@ -102,6 +116,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                <StackPanel Spacing="12" IsVisible="{Binding ShowProducts}">
                 <TextBlock Text="Popular" FontSize="18" FontWeight="SemiBold" Foreground="#1B2430"
                            IsVisible="{Binding HasPopular}" />
                 <ItemsControl ItemsSource="{Binding PopularTiles}" IsVisible="{Binding HasPopular}"
@@ -122,6 +137,37 @@
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
 
+                </StackPanel>
+
+                <Border IsVisible="{Binding IsMiscellaneous}" Background="White" BorderBrush="#D5DAE0" BorderThickness="1"
+                        CornerRadius="16" Padding="24" MaxWidth="560" HorizontalAlignment="Left">
+                    <StackPanel Spacing="16">
+                        <TextBlock Text="Miscellaneous item" FontSize="22" FontWeight="SemiBold" Foreground="#1B2430" />
+                        <TextBlock Text="For anything not on the buttons. Type the price, then add it to the order."
+                                   Foreground="#4A5563" TextWrapping="Wrap" />
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="Price" Foreground="#4A5563" />
+                            <TextBlock Text="{Binding Misc.DisplayText}" FontSize="52" FontWeight="Bold" Foreground="#1B2430" />
+                        </StackPanel>
+                        <ItemsControl ItemsSource="{Binding Misc.Keys}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:KeypadKeyViewModel">
+                                    <Button Classes="key" Content="{Binding Label}" Command="{Binding PressCommand}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Button Content="Add to order" Command="{Binding Misc.AddCommand}" IsEnabled="{Binding Misc.CanAdd}"
+                                Background="#1F4E8C" Foreground="White" FontSize="20" FontWeight="Bold" Height="60"
+                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" CornerRadius="12" />
+                        <TextBlock Text="Not tracked in stock. It counts towards today's sales as Miscellaneous."
+                                   FontSize="14" Foreground="#4A5563" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 
@@ -140,7 +186,7 @@
                     <TextBlock Text="Tap a product to add it." Foreground="#4A5563" IsVisible="{Binding IsOrderEmpty}" />
                 </StackPanel>
 
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ScrollViewer VerticalScrollBarVisibility="Visible" AllowAutoHide="False">
                     <ItemsControl ItemsSource="{Binding Lines}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="vm:OrderLineViewModel">

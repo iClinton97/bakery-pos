@@ -11,6 +11,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly ProductCatalogue _catalogue;
     private readonly Order _order = new();
     private string _otherHeading = "";
+    private bool _isMiscellaneous;
 
     public MainWindowViewModel(ProductCatalogue catalogue)
     {
@@ -18,11 +19,14 @@ public sealed class MainWindowViewModel : ViewModelBase
 
         Tabs =
         [
-            new CategoryTabViewModel("Pies", Category.Pies, SelectCategory),
-            new CategoryTabViewModel("Hot food", Category.HotFood, SelectCategory),
-            new CategoryTabViewModel("Cakes", Category.Cakes, SelectCategory),
-            new CategoryTabViewModel("Savoury", Category.Savoury, SelectCategory),
+            new CategoryTabViewModel("Pies", Category.Pies, () => SelectCategory(Category.Pies)),
+            new CategoryTabViewModel("Hot food", Category.HotFood, () => SelectCategory(Category.HotFood)),
+            new CategoryTabViewModel("Cakes", Category.Cakes, () => SelectCategory(Category.Cakes)),
+            new CategoryTabViewModel("Savoury", Category.Savoury, () => SelectCategory(Category.Savoury)),
+            new CategoryTabViewModel("Miscellaneous", null, SelectMiscellaneous),
         ];
+
+        Misc = new MiscellaneousViewModel(AddMiscellaneous);
 
         SelectCategory(Category.Pies);
         RefreshOrder();
@@ -36,7 +40,24 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<OrderLineViewModel> Lines { get; } = new();
 
+    public MiscellaneousViewModel Misc { get; }
+
     public bool HasPopular => PopularTiles.Count > 0;
+
+    /// <summary>True while the Miscellaneous keypad is showing instead of product tiles.</summary>
+    public bool IsMiscellaneous
+    {
+        get => _isMiscellaneous;
+        private set
+        {
+            if (Set(ref _isMiscellaneous, value))
+            {
+                Raise(nameof(ShowProducts));
+            }
+        }
+    }
+
+    public bool ShowProducts => !_isMiscellaneous;
 
     public string OtherHeading
     {
@@ -48,8 +69,21 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public bool IsOrderEmpty => _order.IsEmpty;
 
+    private void SelectMiscellaneous()
+    {
+        foreach (var tab in Tabs)
+        {
+            tab.IsSelected = tab.Category is null;
+        }
+
+        Misc.Reset();
+        IsMiscellaneous = true;
+    }
+
     private void SelectCategory(Category category)
     {
+        IsMiscellaneous = false;
+
         foreach (var tab in Tabs)
         {
             tab.IsSelected = tab.Category == category;
@@ -74,6 +108,12 @@ public sealed class MainWindowViewModel : ViewModelBase
     private void AddProduct(Product product)
     {
         _order.Add(product);
+        RefreshOrder();
+    }
+
+    private void AddMiscellaneous(int priceCents)
+    {
+        _order.AddMiscellaneous(priceCents);
         RefreshOrder();
     }
 
